@@ -7,10 +7,11 @@
 #include "Allocators/HeapAllocator.h"
 #include "Allocators/FreeListAllocator.h"
 
+template <patricia::Unsigned T, patricia::BitmapC Bitmap, typename Alloc = std::allocator<patricia::detail::IntPatriciaNode<T, Bitmap>>>
 void SimpleTest() {
     // simple persistent set example
 
-    patricia::IntSet<std::uint32_t, std::uint64_t> set;
+    patricia::IntSet<T, Bitmap, Alloc> set;
 
     // set = {0, 1, ..., 41}
     for (std::uint32_t i = 0; i < 42; ++i) {
@@ -51,7 +52,7 @@ void SimpleTest() {
 }
 
 template <typename Alloc>
-void AllocatorTest() {
+void SimpleAllocatorTest() {
     patricia::IntSet<std::uint64_t, std::uint64_t, Alloc> set;
 
     set.insert(1);
@@ -62,11 +63,15 @@ void AllocatorTest() {
 
 int main()
 {
-    SimpleTest();
-    AllocatorTest<StdTwoPoolsAllocator<void, 1 << 10, 72, 48>>();
-    AllocatorTest<StdFreeListAllocator<void, 72>>();
-    AllocatorTest<StdHeapAllocator<void>>();
-    AllocatorTest<std::allocator<void>>();
+    SimpleTest<std::uint32_t, std::uint32_t>();
+    SimpleTest<std::uint32_t, std::uint64_t>();
+    SimpleTest<std::uint32_t, patricia::NoBitmap>();
+    SimpleTest<std::uint32_t, patricia::NoBitmap, StdTwoPoolsAllocator<void, 1 << 10, 72, 40>>();
+
+    SimpleAllocatorTest<StdTwoPoolsAllocator<void, 1 << 10, 72, 48>>();
+    SimpleAllocatorTest<StdFreeListAllocator<void, 72>>();
+    SimpleAllocatorTest<StdHeapAllocator<void>>();
+    SimpleAllocatorTest<std::allocator<void>>();
 
     std::cout << "All tests passed\n";
 

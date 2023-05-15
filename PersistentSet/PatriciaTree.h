@@ -15,37 +15,37 @@
 // - Can store any unsigned integer type as elements.
 // - Bitmaps can also be any unsigned integer types.
 // - Allocator support. 
-// - I would suggest using allocator with two memory pools: one for leaves nodes, and one for branch nodes.
+// - I would suggest using allocator with two memory pools: one for leaf nodes, and one for branch nodes.
 
 namespace patricia {
 namespace detail {
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaNode;
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaLeaf;
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaBranch;
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 using IntPatriciaPtr = std::shared_ptr<const IntPatriciaNode<T, Bitmap>>;
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 using IntPatriciaRawPtr = const IntPatriciaNode<T, Bitmap>*;
 
-template <Unsigned T, Unsigned Bitmap, typename Alloc, typename... Args>
+template <Unsigned T, BitmapC Bitmap, typename Alloc, typename... Args>
 IntPatriciaPtr<T, Bitmap> MakePatriciaLeafPtr(Args&&... args) {
     return std::allocate_shared<const IntPatriciaLeaf<T, Bitmap>>(Alloc(), args...);
 }
 
-template <Unsigned T, Unsigned Bitmap, typename Alloc, typename... Args>
+template <Unsigned T, BitmapC Bitmap, typename Alloc, typename... Args>
 IntPatriciaPtr<T, Bitmap> MakePatriciaBranchPtr(Args&&... args) {
     return std::allocate_shared<const IntPatriciaBranch<T, Bitmap>>(Alloc(), args...);
 }
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaNode {
  public:
     using Leaf = IntPatriciaLeaf<T, Bitmap>;
@@ -88,11 +88,11 @@ class IntPatriciaNode {
     bool isLeaf = false;
 };
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaLeaf : public IntPatriciaNode<T, Bitmap> {
  public:
-    IntPatriciaLeaf(T key = 0, Bitmap bitmap = 0)
-        : IntPatriciaNode<T, Bitmap>(true), prefix(util::prefixOf<T, Bitmap>(key)), bitmap(util::bitmapOf<T, Bitmap>(key) | bitmap) {
+    IntPatriciaLeaf(T key = 0, Bitmap bitmap = Bitmap())
+        : IntPatriciaNode<T, Bitmap>(true), prefix(util::prefixOf<T, Bitmap>(key)), bitmap(util::addKeyToBitmap<T, Bitmap>(key, bitmap)) {
     }
 
     T GetPrefix() const {
@@ -111,7 +111,7 @@ class IntPatriciaLeaf : public IntPatriciaNode<T, Bitmap> {
     Bitmap bitmap;
 };
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 class IntPatriciaBranch : public IntPatriciaNode<T, Bitmap> {
  public:
     IntPatriciaBranch(T p = 0, T m = 0, IntPatriciaPtr<T, Bitmap> l = {}, IntPatriciaPtr<T, Bitmap> r = {})
@@ -151,7 +151,7 @@ class IntPatriciaBranch : public IntPatriciaNode<T, Bitmap> {
     IntPatriciaPtr<T, Bitmap> right;
 };
 
-template <Unsigned T, Unsigned Bitmap, typename Alloc>
+template <Unsigned T, BitmapC Bitmap, typename Alloc>
 IntPatriciaPtr<T, Bitmap> Branch(T p1, IntPatriciaPtr<T, Bitmap> t1, T p2, IntPatriciaPtr<T, Bitmap> t2) {
     const auto mask = util::branchMask(p1, p2);
     const auto prefix = util::highBitsOfKey(p1, mask);
@@ -163,7 +163,7 @@ IntPatriciaPtr<T, Bitmap> Branch(T p1, IntPatriciaPtr<T, Bitmap> t1, T p2, IntPa
     }
 }
 
-template <Unsigned T, Unsigned Bitmap, typename Alloc>
+template <Unsigned T, BitmapC Bitmap, typename Alloc>
 IntPatriciaPtr<T, Bitmap> Insert(IntPatriciaPtr<T, Bitmap> t, T key) {
     if (!t) {
         // tree is empty
@@ -229,7 +229,7 @@ IntPatriciaPtr<T, Bitmap> Insert(IntPatriciaPtr<T, Bitmap> t, T key) {
     return t->AsBranch()->ReplaceChild<Alloc>(path[0], current);
 }
 
-template <Unsigned T, Unsigned Bitmap>
+template <Unsigned T, BitmapC Bitmap>
 bool Lookup(IntPatriciaPtr<T, Bitmap> t, T key) {
     if (!t) {
         // tree is empty

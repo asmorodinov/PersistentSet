@@ -7,7 +7,7 @@
 
 namespace patricia {
 
-template <Unsigned T, Unsigned Bitmap, typename Alloc = std::allocator<detail::IntPatriciaNode<T, Bitmap>>>
+template <Unsigned T, BitmapC Bitmap, typename Alloc = std::allocator<detail::IntPatriciaNode<T, Bitmap>>>
 class IntSet {
  public:
     IntSet() = default;
