@@ -1,22 +1,23 @@
 ﻿{
     "version": 3,
     "configurePresets": [
-        {
-            "name": "windows-base",
-            "hidden": true,
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "installDir": "${sourceDir}/out/install/${presetName}",
-            "cacheVariables": {
-                "CMAKE_C_COMPILER": "cl.exe",
-                "CMAKE_CXX_COMPILER": "cl.exe"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
+      {
+        "name": "windows-base",
+        "hidden": true,
+        "generator": "Ninja",
+        "toolchainFile": "C:/Users/User/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "binaryDir": "${sourceDir}/out/build/${presetName}",
+        "installDir": "${sourceDir}/out/install/${presetName}",
+        "cacheVariables": {
+          "CMAKE_C_COMPILER": "cl.exe",
+          "CMAKE_CXX_COMPILER": "cl.exe"
         },
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        }
+      },
         {
             "name": "x64-debug",
             "displayName": "x64 Debug",

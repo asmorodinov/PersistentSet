@@ -8,8 +8,8 @@
 
 #include "AdapterAllocator.h"
 
-template <typename T>
-using FreeListAllocator = immer::unsafe_free_list_heap_policy<immer::cpp_heap, 1u << 20>::optimized<sizeof(T) + 2 * sizeof(void*)>::type;
+template <std::size_t Size>
+using FreeListAllocator = immer::unsafe_free_list_heap_policy<immer::cpp_heap>::optimized<Size>::type;
 
-template <typename T>
-using StdFreeListAllocator = AdapterAllocator<T, FreeListAllocator<T>>;
+template <typename T, std::size_t Size>
+using StdFreeListAllocator = AdapterAllocator<T, FreeListAllocator<Size>>;
