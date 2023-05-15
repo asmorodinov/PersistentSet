@@ -202,10 +202,10 @@ IntPatriciaPtr<T, Bitmap> Insert(IntPatriciaPtr<T, Bitmap> t, T key) {
 
     IntPatriciaPtr<T, Bitmap> current;
 
-    if (const auto leaf = node->AsLeaf(); leaf && (util::prefixOf<T, Bitmap>(key) == leaf->GetPrefix())) {
+    if (const auto leaf = node->AsLeaf(); leaf && util::matchPrefix<T, Bitmap>(key, leaf->GetPrefix())) {
         // key prefix matches leaf's prefix
 
-        if ((util::bitmapOf<T, Bitmap>(key) & leaf->GetBitmap()) != 0) {
+        if (util::matchBitmap<T, Bitmap>(key, leaf->GetBitmap())) {
             // full match: key already present
             return t;
         } else {
@@ -214,7 +214,6 @@ IntPatriciaPtr<T, Bitmap> Insert(IntPatriciaPtr<T, Bitmap> t, T key) {
         }
     } else {
         // key's prefix does not match node's prefix
-
         // create new branch
         current = Branch<T, Bitmap, Alloc>(node->GetPrefix(), node, util::prefixOf<T, Bitmap>(key), MakePatriciaLeafPtr<T, Bitmap, Alloc>(key));
     }

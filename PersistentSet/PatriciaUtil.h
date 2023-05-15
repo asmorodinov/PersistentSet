@@ -86,8 +86,17 @@ Bitmap bitmapOf(T key) {
 }
 
 template <Unsigned T, Unsigned Bitmap>
+bool matchPrefix(T key, T prefix) {
+    return prefixOf<T, Bitmap>(key) == prefix;
+}
+template <Unsigned T, Unsigned Bitmap>
+bool matchBitmap(T key, Bitmap bitmap) {
+    return (bitmapOf<T, Bitmap>(key) & bitmap) != 0;
+}
+
+template <Unsigned T, Unsigned Bitmap>
 bool matchLeaf(T key, T prefix, Bitmap bitmap) {
-    return (prefixOf<T, Bitmap>(key) == prefix) && ((bitmapOf<T, Bitmap>(key) & bitmap) != 0);
+    return matchPrefix<T, Bitmap>(key, prefix) && matchBitmap<T, Bitmap>(key, bitmap);
 }
 
 }  // namespace util
