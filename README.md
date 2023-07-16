@@ -84,12 +84,14 @@ Code is based on Haskell's [Data.IntSet](https://hackage.haskell.org/package/con
 ### Videos
 - [Lambda World 2018 - The Radix Trees How IntMap Works - Tikhon Jelvis](https://youtu.be/0udjkEiCjog)
 - [C++Now 2017: Phil Nash “The Holy Grail!? A Persistent Hash-Array-Mapped Trie for C++"](https://youtu.be/WT9kmIE3Uis) - about HAMT (not Patricia tree)
+- [Postmodern immutable data structures - Juan Pedro Bolivar Puente [C++ on Sea 2019]](https://youtu.be/y_m0ce1rzRI) - about `immer::vector` (RRB trees), but still very interesting video
 
 ### Other
 - [Functional Programming in C++](https://github.com/graninas/cpp_functional_programming)
 - [libstdc++ Chapter 21. Policy-Based Data Structures
 Prev 	Part III.  Extensions](https://gcc.gnu.org/onlinedocs/libstdc++/manual/policy_data_structures.html)
 - [libstdc++ Trie design](https://gcc.gnu.org/onlinedocs/libstdc++/manual/policy_data_structures_design.html#pbds.design.container.trie)
+- [Other implementations and descriptions of RRB trees](https://cljdoc.org/d/org.clojure/core.rrb-vector/0.1.2/doc/other-implementations-and-descriptions-of-rrb-trees) - great collection of resources on RRB trees
 
 ## Patricia tree in other languages
 - Haskell
