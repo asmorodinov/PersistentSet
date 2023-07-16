@@ -37,7 +37,7 @@ Other methods, such as `IntSet union(IntSet other) const` (that returns union of
 
 Copying the data-structure has worst-case complexity of `O(1)`.
 
-Performance was not tested via microbenchmarks, however, in my use case it performed better than existing implementations of Patricia trees - see [performance.md](https://github.com/asmorodinov/3DRoguelike/blob/master/performance.md#results) (2nd vs 5th and 6th columns).
+Performance was not tested via microbenchmarks, however, in my use case it performed better than existing implementations of Patricia trees ([NASA-SW-VnV/ikos](https://github.com/NASA-SW-VnV/ikos/tree/master/core/include/ikos/core/adt/patricia_tree) and [facebook/sparta](https://github.com/facebook/SPARTA/blob/main/include/PatriciaTreeCore.h)) - see [performance.md](https://github.com/asmorodinov/3DRoguelike/blob/master/performance.md#results) (3d vs 4th and 5th columns).
 
 ## How to build
 
@@ -58,11 +58,12 @@ Originally, immer was installed using vcpkg.
 Code is based on Haskell's [Data.IntSet](https://hackage.haskell.org/package/containers-0.6.7/docs/Data-IntSet.html) implementation.
 
 ## Alternatives
-- [NASA-SW-VnV/ikos](https://github.com/NASA-SW-VnV/ikos/tree/master/core/include/ikos/core/adt/patricia_tree) - good implementation, but uses little-endian key traversal, and no support for bitmaps in leaves and allocators.
+- [NASA-SW-VnV/ikos](https://github.com/NASA-SW-VnV/ikos/tree/master/core/include/ikos/core/adt/patricia_tree) - good implementation, but uses little-endian key traversal, and no support for bitmaps in leaves and allocators (so it's a little bit slower).
 - [facebook/sparta](https://github.com/facebook/SPARTA/blob/main/include/PatriciaTreeCore.h) - similar to ikos.
 - [sikol/patricia](https://github.com/sikol/patricia) - contains bugs as far as I know
 - [libstdc++/pat_trie_.hpp](https://gcc.gnu.org/onlinedocs/gcc-4.9.2/libstdc++/api/a01084_source.html) - not sure how to build this and include in your own project.
 - [arximboldi/immer](https://github.com/arximboldi/immer) - `immer::set`. Actually, it is implemented with CHAMP (Compressed Hash-Array Mapped Prefix-tree) and not Patricia tree, so it's more similar to [Data.HashSet](https://hackage.haskell.org/package/unordered-containers-0.2.19.1/docs/Data-HashSet.html) than [Data.IntSet](https://hackage.haskell.org/package/containers-0.6.7/docs/Data-IntSet.html). However, it is very well implemented, and actually performs better than this implementation. It also supports `erase` operation, and non-integer keys. However, `union` operation would probably be more expensive for CHAMP compared to Patricia trees.
+- [arximboldi/immer](https://github.com/arximboldi/immer) - `immer::vector`. It is implemented using Relaxed Radix Balanced Trees (see authors [video](https://youtu.be/y_m0ce1rzRI) and [paper](https://dl.acm.org/doi/pdf/10.1145/3110260) on the topic). If the keys are in some continuous range (e.g $0, \ldots, n - 1$), then you can store set of them in a `vector<bool>` of size $n$ ($x \in s \iff s[x] == true$), or `vector<uint64_t>` of size $n / 64$. This is the most efficient approach according to our benchmarks (see [performance.md](https://github.com/asmorodinov/3DRoguelike/blob/master/performance.md#results), 1st column).
 
 ## Resources on Patricia trees
 
